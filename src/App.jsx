@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 function App() {
+  const [text, setText] = useState("");
   const countries = [
     { name: "United States", flag: "🇺🇸" },
     { name: "Brazil", flag: "🇧🇷" },
@@ -32,20 +33,28 @@ function App() {
           margin: "0.5rem",
         }}
       >
-        {countries.map((country, index) => {
-          return (
-            <li
-              key={country.name + index}
-              style={{
-                borderBottom: "1px solid black",
-                padding: "1rem 0",
-                listStyleType: "none",
-              }}
-            >
-              {country.flag} {country.name}
-            </li>
-          );
-        })}
+        {countries
+          .filter((country) => {
+            const size = text.length;
+            return country.name
+              .slice(0, size)
+              .toLowerCase()
+              .includes(text.toLowerCase());
+          })
+          .map((country, index) => {
+            return (
+              <li
+                key={country.name + index}
+                style={{
+                  borderBottom: "1px solid black",
+                  padding: "1rem 0",
+                  listStyleType: "none",
+                }}
+              >
+                {country.flag} {country.name}
+              </li>
+            );
+          })}
       </ul>
     </>
   );

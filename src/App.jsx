@@ -5,7 +5,23 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [countries, setCountries] = useState([]);
   const [language, setLanguage] = useState("eng");
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
 
+  // checkConnection
+  useEffect(() => {
+    const handleStatusChange = () => {
+      setIsOnline(navigator.onLine);
+    };
+
+    window.addEventListener("online", handleStatusChange);
+    window.addEventListener("offline", handleStatusChange);
+    return () => {
+      window.removeEventListener("online", handleStatusChange);
+      window.removeEventListener("offline", handleStatusChange);
+    };
+  }, [isOnline]);
+
+  // loadData
   useEffect(() => {
     fetch("https://restcountries.com/v3.1/all")
       .then((response) => {
@@ -20,7 +36,21 @@ function App() {
       });
   }, []);
 
-  return (
+  return !isOnline ? (
+    <>
+      <h1 style={{ margin: "0.5rem" }}>Country Finder</h1>
+      <p
+        style={{
+          backgroundColor: "orange",
+          color: "white",
+          fontSize: "24px",
+          margin: "0.5rem",
+        }}
+      >
+        ⚠ You are offline, Please check your wifi.
+      </p>
+    </>
+  ) : (
     <>
       <h1 style={{ margin: "0.5rem" }}>Country Finder</h1>
       <input
@@ -73,7 +103,7 @@ function App() {
           {countries
             .filter((country) => {
               const size = text.length;
-              return country.name.official
+              return country.name.common
                 .toLowerCase()
                 .includes(text.toLowerCase());
             })

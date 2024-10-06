@@ -39,6 +39,12 @@ function App() {
         placeholder="Type to find..."
       />
       <select
+        style={{
+          margin: "0 0.5rem",
+          border: "none",
+          padding: "0.5rem",
+          fontSize: "16px",
+        }}
         value={language}
         onChange={(e) => {
           setLanguage(e.target.value);
@@ -67,25 +73,36 @@ function App() {
           {countries
             .filter((country) => {
               const size = text.length;
-              return country.name.common
-                .slice(0, size)
+              return country.name.official
                 .toLowerCase()
                 .includes(text.toLowerCase());
             })
             .map((country, index) => {
+              const countryName = country.translations[language]
+                ? country.translations[language].official
+                : country.name.official;
               return (
                 <li
                   key={country.name.official}
                   style={{
+                    whiteSpace: "pre",
                     borderBottom: "1px solid black",
                     padding: "1rem 0",
                     listStyleType: "none",
                   }}
                 >
-                  {country.flag}{" "}
-                  {country.translations[language]
-                    ? country.translations[language].official
-                    : country.name.official}
+                  <p>{country.flag}</p>
+                  {countryName
+                    .split(new RegExp(`(${text})`, "gi"))
+                    .map((c, idx) =>
+                      c.toLowerCase() == text.toLowerCase() ? (
+                        <span key={idx} style={{ backgroundColor: "skyblue" }}>
+                          {c}
+                        </span>
+                      ) : (
+                        c
+                      )
+                    )}
                 </li>
               );
             })}
